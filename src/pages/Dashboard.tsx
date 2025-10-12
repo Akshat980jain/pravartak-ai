@@ -12,7 +12,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 pt-24 pb-12">
         <div className="mb-8">
@@ -21,7 +21,7 @@ const Dashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="shadow-soft hover:shadow-medium transition-smooth">
+          <Card className="shadow-card border-border/50 hover:shadow-medium transition-smooth">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
               <FileText className="w-4 h-4 text-muted-foreground" />
@@ -32,7 +32,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-soft hover:shadow-medium transition-smooth">
+          <Card className="shadow-card border-border/50 hover:shadow-medium transition-smooth">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
               <AlertCircle className="w-4 h-4 text-secondary" />
@@ -43,7 +43,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-soft hover:shadow-medium transition-smooth">
+          <Card className="shadow-card border-border/50 hover:shadow-medium transition-smooth">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Approved</CardTitle>
               <CheckCircle className="w-4 h-4 text-accent" />
@@ -54,7 +54,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="shadow-soft hover:shadow-medium transition-smooth">
+          <Card className="shadow-card border-border/50 hover:shadow-medium transition-smooth">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Disbursed</CardTitle>
               <TrendingUp className="w-4 h-4 text-primary" />
@@ -73,8 +73,8 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="applications" className="space-y-4">
-            <Card className="shadow-medium">
-              <CardHeader>
+            <Card className="shadow-card border-border/50">
+              <CardHeader className="border-b border-border bg-muted/30">
                 <CardTitle>Recent Applications</CardTitle>
                 <CardDescription>Latest benefit applications submitted</CardDescription>
               </CardHeader>
@@ -107,8 +107,8 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-4">
-            <Card className="shadow-medium">
-              <CardHeader>
+            <Card className="shadow-card border-border/50">
+              <CardHeader className="border-b border-border bg-muted/30">
                 <CardTitle>Analytics Overview</CardTitle>
                 <CardDescription>Key metrics and insights</CardDescription>
               </CardHeader>

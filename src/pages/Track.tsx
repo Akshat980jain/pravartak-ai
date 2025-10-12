@@ -25,7 +25,7 @@ const Track = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 pt-24 pb-12">
         <div className="max-w-4xl mx-auto">
@@ -36,8 +36,8 @@ const Track = () => {
             </p>
           </div>
 
-          <Card className="shadow-medium mb-8">
-            <CardHeader>
+          <Card className="shadow-card border-border/50 mb-8">
+            <CardHeader className="border-b border-border bg-muted/30">
               <CardTitle>Search Application</CardTitle>
               <CardDescription>Enter your 14-digit application ID</CardDescription>
             </CardHeader>
@@ -60,8 +60,8 @@ const Track = () => {
           </Card>
 
           {showResults && (
-            <Card className="shadow-medium">
-              <CardHeader>
+            <Card className="shadow-card border-border/50">
+              <CardHeader className="border-b border-border bg-muted/30">
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>Application Status</CardTitle>

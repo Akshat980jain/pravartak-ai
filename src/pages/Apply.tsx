@@ -27,23 +27,23 @@ const Apply = () => {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 pt-24 pb-12">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4 border border-primary/20">
+            <div className="gov-badge mb-4">
               <FileText className="w-4 h-4" />
-              <span className="text-sm font-medium">Beneficiary Application</span>
+              <span>Beneficiary Application Form</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">Apply for Benefits</h1>
-            <p className="text-muted-foreground">
-              Fill in the details below to submit your application under PCR & PoA Acts
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Submit your application for financial relief under PCR Act, 1955 and SC/ST (Prevention of Atrocities) Act, 1989
             </p>
           </div>
 
-          <Card className="shadow-medium">
-            <CardHeader>
+          <Card className="shadow-card border-border/50">
+            <CardHeader className="border-b border-border bg-muted/30">
               <CardTitle>Personal Information</CardTitle>
               <CardDescription>Please provide accurate information for verification</CardDescription>
             </CardHeader>
