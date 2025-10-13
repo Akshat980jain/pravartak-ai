@@ -122,9 +122,10 @@ app.get('/health', (req, res) => {
 // Serve static files
 app.use(express.static('public'));
 
-// Favicon endpoint
+// Favicon endpoint - return a simple response to prevent 404
 app.get('/favicon.ico', (req, res) => {
-  res.status(204).end(); // No content response
+  res.setHeader('Content-Type', 'image/x-icon');
+  res.status(200).send(''); // Empty response but with 200 status
 });
 
 // API routes

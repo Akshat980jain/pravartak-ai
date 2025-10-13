@@ -19,7 +19,7 @@ import axios from "axios";
 const schema = yup.object({
   fullName: yup.string().required("Full name is required").min(2, "Name must be at least 2 characters"),
   email: yup.string().email("Invalid email format").required("Email is required"),
-  mobile: yup.string().required("Mobile number is required").matches(/^[6-9]\d{9}$/, "Invalid mobile number"),
+  mobile: yup.string().required("Mobile number is required").matches(/^(\+91)?[6-9]\d{9}$/, "Invalid mobile number"),
   password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
   confirmPassword: yup.string().required("Please confirm your password").oneOf([yup.ref('password')], 'Passwords must match'),
   role: yup.string().required("Please select a role"),
@@ -39,6 +39,7 @@ const Register = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: yupResolver(schema),
@@ -255,7 +256,7 @@ const Register = () => {
                     <Label htmlFor="role" className="text-sm font-medium text-gray-700">
                       Role *
                     </Label>
-                    <Select onValueChange={(value) => register("role").onChange({ target: { value } })}>
+                    <Select onValueChange={(value) => setValue("role", value)}>
                       <SelectTrigger className="border-gray-300 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Select your role" />
                       </SelectTrigger>
@@ -367,7 +368,7 @@ const Register = () => {
                     <div className="flex items-start space-x-2">
                       <Checkbox
                         id="agreeToTerms"
-                        {...register("agreeToTerms")}
+                        onCheckedChange={(checked) => setValue("agreeToTerms", checked as boolean)}
                         className="mt-1"
                       />
                       <Label htmlFor="agreeToTerms" className="text-sm text-gray-600 leading-relaxed">
