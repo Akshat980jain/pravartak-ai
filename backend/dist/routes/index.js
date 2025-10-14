@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import schemes from './schemes.js';
+import applications from './applications.js';
+import grievances from './grievances.js';
+import contact from './contact.js';
+const router = Router();
+router.use('/schemes', schemes);
+router.use('/applications', applications);
+router.use('/grievances', grievances);
+router.use('/contact', contact);
+export default router;

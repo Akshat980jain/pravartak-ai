@@ -1,441 +1,367 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Save, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
-import { Shield, Mail, User, Lock, Phone, Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import axios from "axios";
-
-// Validation schema
-const schema = yup.object({
-  fullName: yup.string().required("Full name is required").min(2, "Name must be at least 2 characters"),
-  email: yup.string().email("Invalid email format").required("Email is required"),
-  mobile: yup.string().required("Mobile number is required").matches(/^(\+91)?[6-9]\d{9}$/, "Invalid mobile number"),
-  password: yup.string().required("Password is required").min(8, "Password must be at least 8 characters"),
-  confirmPassword: yup.string().required("Please confirm your password").oneOf([yup.ref('password')], 'Passwords must match'),
-  role: yup.string().required("Please select a role"),
-  department: yup.string(),
-  agreeToTerms: yup.boolean().oneOf([true], "You must agree to the terms and conditions"),
-});
-
-type FormData = yup.InferType<typeof schema>;
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const Register = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: yupResolver(schema),
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    aadhaar: "",
+    address: "",
+    state: "",
+    district: "",
+    caste: "",
+    firNumber: "",
+    firDate: "",
+    incidentDate: "",
+    incidentLocation: "",
+    compensationType: "",
+    bankAccount: "",
+    ifsc: "",
+    bankName: ""
   });
 
-  const password = watch("password", "");
-  const confirmPassword = watch("confirmPassword", "");
-
-  // Password strength calculation
-  const getPasswordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength += 25;
-    if (/[a-z]/.test(password)) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/[0-9]/.test(password)) strength += 25;
-    return strength;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const applicationId = "DBT-PCR-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+    
+    toast({
+      title: "Application Submitted Successfully!",
+      description: `Your application ID is: ${applicationId}. You will receive updates on your registered email and mobile number.`,
+    });
+    
+    setTimeout(() => navigate("/track"), 2000);
   };
-
-  const getPasswordStrengthText = (strength: number) => {
-    if (strength < 25) return { text: "Very Weak", color: "text-red-500" };
-    if (strength < 50) return { text: "Weak", color: "text-orange-500" };
-    if (strength < 75) return { text: "Good", color: "text-yellow-500" };
-    return { text: "Strong", color: "text-green-500" };
-  };
-
-  const passwordStrength = getPasswordStrength(password);
-  const strengthInfo = getPasswordStrengthText(passwordStrength);
-
-  const onSubmit = async (data: FormData) => {
-    setIsLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // In a real app, you would make an API call here:
-      // const response = await axios.post('/api/auth/register', data);
-      
-      toast.success("Registration successful! Redirecting to login...");
-      
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
-    } catch (error) {
-      toast.error("Registration failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const roleOptions = [
-    { value: "administrator", label: "Administrator" },
-    { value: "scheme_officer", label: "Scheme Officer" },
-    { value: "field_officer", label: "Field Officer" },
-    { value: "auditor", label: "Auditor" },
-    { value: "beneficiary", label: "Beneficiary" },
-  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="flex items-center justify-center pt-8 pb-4"
-      >
-        <div className="flex items-center gap-3">
-          <Shield className="w-10 h-10 text-blue-600" strokeWidth={2} />
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900">DBT Implementation Portal</h1>
-            <p className="text-sm text-gray-600">Ministry of Social Justice and Empowerment</p>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Header />
+
+      <main className="flex-1">
+        <div className="bg-primary text-primary-foreground py-6">
+          <div className="container mx-auto px-4">
+            <h1 className="text-3xl font-bold">Apply for Benefit</h1>
+            <p className="text-sm opacity-90 mt-1">लाभ के लिए आवेदन करें</p>
           </div>
         </div>
-      </motion.div>
 
-      <div className="container mx-auto px-4 py-4 lg:py-8">
-        <div className="grid lg:grid-cols-2 gap-4 lg:gap-8 max-w-6xl mx-auto">
-          {/* Left Panel - Illustration */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col justify-center items-center p-4 lg:p-8"
-          >
-            <div className="text-center space-y-4 lg:space-y-6">
-              <div className="w-48 h-48 lg:w-64 lg:h-64 bg-gradient-to-br from-blue-100 to-orange-100 rounded-full flex items-center justify-center mx-auto">
-                <div className="text-center space-y-2 lg:space-y-4">
-                  <div className="w-24 h-24 lg:w-32 lg:h-32 bg-white rounded-full flex items-center justify-center shadow-lg">
-                    <Shield className="w-12 h-12 lg:w-16 lg:h-16 text-blue-600" />
-                  </div>
-                  <div className="space-y-1 lg:space-y-2">
-                    <div className="w-6 h-6 lg:w-8 lg:h-8 bg-green-500 rounded-full mx-auto flex items-center justify-center">
-                      <CheckCircle className="w-3 h-3 lg:w-5 lg:h-5 text-white" />
-                    </div>
-                    <div className="w-5 h-5 lg:w-6 lg:h-6 bg-blue-500 rounded-full mx-auto flex items-center justify-center">
-                      <User className="w-3 h-3 lg:w-4 lg:h-4 text-white" />
-                    </div>
-                    <div className="w-3 h-3 lg:w-4 lg:h-4 bg-orange-500 rounded-full mx-auto"></div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-2 lg:space-y-4">
-                <h2 className="text-xl lg:text-3xl font-bold text-gray-900">
-                  Empowering Transparent Direct Benefit Transfer
-                </h2>
-                <p className="text-sm lg:text-lg text-gray-600 max-w-md mx-auto px-4">
-                  Join our secure platform to manage and monitor DBT schemes efficiently across India.
-                </p>
-                <div className="flex justify-center space-x-4 lg:space-x-8 text-xs lg:text-sm text-gray-500">
-                  <div className="text-center">
-                    <div className="font-semibold text-blue-600">100%</div>
-                    <div>Transparent</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-semibold text-green-600">Secure</div>
-                    <div>Processing</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-semibold text-orange-600">24/7</div>
-                    <div>Support</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+        <div className="container mx-auto px-4 py-8 max-w-5xl">
+          <div className="bg-yellow-50 border-l-4 border-[hsl(35,100%,50%)] p-4 mb-6">
+            <p className="text-sm font-semibold">📌 Important: All fields marked with * are mandatory. Please ensure all information is accurate.</p>
+          </div>
 
-          {/* Right Panel - Registration Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex items-center justify-center"
-          >
-            <Card className="w-full max-w-md shadow-xl lg:shadow-2xl border-0 bg-white/90 lg:bg-white/80 backdrop-blur-sm">
-              <CardHeader className="text-center pb-6">
-                <CardTitle className="text-2xl font-bold text-gray-900">Create Account</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Register to access the DBT Implementation Portal
-                </CardDescription>
+          <form onSubmit={handleSubmit}>
+            {/* Personal Information */}
+            <Card className="mb-6">
+              <CardHeader className="bg-primary/5">
+                <CardTitle>Personal Information / व्यक्तिगत जानकारी</CardTitle>
+                <CardDescription>Enter your basic details as per Aadhaar card</CardDescription>
               </CardHeader>
-              
-              <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  {/* Full Name */}
+              <CardContent className="space-y-4 pt-6">
+                <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
-                      Full Name *
-                    </Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="fullName"
-                        {...register("fullName")}
-                        placeholder="Enter your full name"
-                        className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                    {errors.fullName && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.fullName.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                      Email Address *
-                    </Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="email"
-                        type="email"
-                        {...register("email")}
-                        placeholder="Enter your email"
-                        className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                    {errors.email && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Mobile */}
-                  <div className="space-y-2">
-                    <Label htmlFor="mobile" className="text-sm font-medium text-gray-700">
-                      Mobile Number *
-                    </Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="mobile"
-                        {...register("mobile")}
-                        placeholder="+91 XXXXX XXXXX"
-                        className="pl-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      />
-                    </div>
-                    {errors.mobile && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.mobile.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Role */}
-                  <div className="space-y-2">
-                    <Label htmlFor="role" className="text-sm font-medium text-gray-700">
-                      Role *
-                    </Label>
-                    <Select onValueChange={(value) => setValue("role", value)}>
-                      <SelectTrigger className="border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {roleOptions.map((role) => (
-                          <SelectItem key={role.value} value={role.value}>
-                            {role.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.role && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.role.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Department */}
-                  <div className="space-y-2">
-                    <Label htmlFor="department" className="text-sm font-medium text-gray-700">
-                      Department/Organization
-                    </Label>
+                    <Label htmlFor="fullName">Full Name (as per Aadhaar) *</Label>
                     <Input
-                      id="department"
-                      {...register("department")}
-                      placeholder="Enter department (optional)"
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      id="fullName"
+                      required
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      placeholder="Enter your full name"
                     />
                   </div>
-
-                  {/* Password */}
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-                      Password *
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        {...register("password")}
-                        placeholder="Create a strong password"
-                        className="pl-10 pr-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                    {password && (
-                      <div className="space-y-2">
-                        <Progress value={passwordStrength} className="h-2" />
-                        <p className={`text-xs ${strengthInfo.color}`}>
-                          Password strength: {strengthInfo.text}
-                        </p>
-                      </div>
-                    )}
-                    {errors.password && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.password.message}
-                      </p>
-                    )}
+                    <Label htmlFor="aadhaar">Aadhaar Number *</Label>
+                    <Input
+                      id="aadhaar"
+                      required
+                      value={formData.aadhaar}
+                      onChange={(e) => setFormData({ ...formData, aadhaar: e.target.value })}
+                      placeholder="12-digit Aadhaar number"
+                      maxLength={12}
+                    />
                   </div>
+                </div>
 
-                  {/* Confirm Password */}
+                <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-                      Confirm Password *
-                    </Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="confirmPassword"
-                        type={showConfirmPassword ? "text" : "password"}
-                        {...register("confirmPassword")}
-                        placeholder="Confirm your password"
-                        className="pl-10 pr-10 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                    {confirmPassword && password !== confirmPassword && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        Passwords do not match
-                      </p>
-                    )}
-                    {errors.confirmPassword && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.confirmPassword.message}
-                      </p>
-                    )}
+                    <Label htmlFor="phone">Mobile Number *</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      placeholder="10-digit mobile number"
+                      maxLength={10}
+                    />
                   </div>
-
-                  {/* Terms and Conditions */}
                   <div className="space-y-2">
-                    <div className="flex items-start space-x-2">
-                      <Checkbox
-                        id="agreeToTerms"
-                        onCheckedChange={(checked) => setValue("agreeToTerms", checked as boolean)}
-                        className="mt-1"
-                      />
-                      <Label htmlFor="agreeToTerms" className="text-sm text-gray-600 leading-relaxed">
-                        I agree to the{" "}
-                        <Link to="/terms" className="text-blue-600 hover:underline">
-                          Terms of Service
-                        </Link>{" "}
-                        and{" "}
-                        <Link to="/privacy" className="text-blue-600 hover:underline">
-                          Privacy Policy
-                        </Link>
-                      </Label>
-                    </div>
-                    {errors.agreeToTerms && (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <AlertCircle className="w-4 h-4" />
-                        {errors.agreeToTerms.message}
-                      </p>
-                    )}
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="your.email@example.com"
+                    />
                   </div>
+                </div>
 
-                  {/* Submit Button */}
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      type="submit"
-                      disabled={isLoading}
-                      className="w-full bg-gradient-to-r from-blue-600 to-orange-500 hover:from-blue-700 hover:to-orange-600 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
-                    >
-                      {isLoading ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Creating Account...
-                        </div>
-                      ) : (
-                        "Register Account"
-                      )}
-                    </Button>
-                  </motion.div>
-
-                  {/* Login Link */}
-                  <div className="text-center">
-                    <p className="text-sm text-gray-600">
-                      Already registered?{" "}
-                      <Link to="/login" className="text-blue-600 hover:underline font-medium">
-                        Login here
-                      </Link>
-                    </p>
-                  </div>
-                </form>
+                <div className="space-y-2">
+                  <Label htmlFor="caste">Category *</Label>
+                  <Select value={formData.caste} onValueChange={(value) => setFormData({ ...formData, caste: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sc">Scheduled Caste (SC)</SelectItem>
+                      <SelectItem value="st">Scheduled Tribe (ST)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardContent>
             </Card>
-          </motion.div>
-        </div>
-      </div>
 
-      {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
-        className="text-center py-6 text-sm text-gray-500 border-t border-gray-200 mt-12"
-      >
-        © 2025 DBT Implementation Portal | Ministry of Social Justice and Empowerment
-      </motion.footer>
+            {/* Address Information */}
+            <Card className="mb-6">
+              <CardHeader className="bg-primary/5">
+                <CardTitle>Address Information / पता जानकारी</CardTitle>
+                <CardDescription>Provide your current residential address</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                <div className="space-y-2">
+                  <Label htmlFor="address">Full Address *</Label>
+                  <Textarea
+                    id="address"
+                    required
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    placeholder="House no., street, village/city, pin code"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="state">State *</Label>
+                    <Select value={formData.state} onValueChange={(value) => setFormData({ ...formData, state: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="maharashtra">Maharashtra</SelectItem>
+                        <SelectItem value="delhi">Delhi</SelectItem>
+                        <SelectItem value="karnataka">Karnataka</SelectItem>
+                        <SelectItem value="tamilnadu">Tamil Nadu</SelectItem>
+                        <SelectItem value="gujarat">Gujarat</SelectItem>
+                        <SelectItem value="rajasthan">Rajasthan</SelectItem>
+                        <SelectItem value="up">Uttar Pradesh</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="district">District *</Label>
+                    <Input
+                      id="district"
+                      required
+                      value={formData.district}
+                      onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+                      placeholder="Enter district"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Incident Details */}
+            <Card className="mb-6">
+              <CardHeader className="bg-primary/5">
+                <CardTitle>Incident Details / घटना विवरण</CardTitle>
+                <CardDescription>Provide details about the atrocity/incident</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firNumber">FIR Number *</Label>
+                    <Input
+                      id="firNumber"
+                      required
+                      value={formData.firNumber}
+                      onChange={(e) => setFormData({ ...formData, firNumber: e.target.value })}
+                      placeholder="Enter FIR number"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="firDate">FIR Date *</Label>
+                    <Input
+                      id="firDate"
+                      type="date"
+                      required
+                      value={formData.firDate}
+                      onChange={(e) => setFormData({ ...formData, firDate: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="incidentDate">Date of Incident *</Label>
+                    <Input
+                      id="incidentDate"
+                      type="date"
+                      required
+                      value={formData.incidentDate}
+                      onChange={(e) => setFormData({ ...formData, incidentDate: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="incidentLocation">Place of Incident *</Label>
+                    <Input
+                      id="incidentLocation"
+                      required
+                      value={formData.incidentLocation}
+                      onChange={(e) => setFormData({ ...formData, incidentLocation: e.target.value })}
+                      placeholder="Enter location"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="compensationType">Type of Compensation *</Label>
+                  <Select value={formData.compensationType} onValueChange={(value) => setFormData({ ...formData, compensationType: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="immediate-relief">Immediate Relief (within 3 days)</SelectItem>
+                      <SelectItem value="full-compensation">Full Compensation</SelectItem>
+                      <SelectItem value="inter-caste-marriage">Inter-caste Marriage Incentive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Bank Details */}
+            <Card className="mb-6">
+              <CardHeader className="bg-primary/5">
+                <CardTitle>Bank Account Details / बैंक खाता विवरण</CardTitle>
+                <CardDescription>For direct benefit transfer (Aadhaar-linked account required)</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="bankAccount">Bank Account Number *</Label>
+                    <Input
+                      id="bankAccount"
+                      required
+                      value={formData.bankAccount}
+                      onChange={(e) => setFormData({ ...formData, bankAccount: e.target.value })}
+                      placeholder="Enter account number"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ifsc">IFSC Code *</Label>
+                    <Input
+                      id="ifsc"
+                      required
+                      value={formData.ifsc}
+                      onChange={(e) => setFormData({ ...formData, ifsc: e.target.value })}
+                      placeholder="Enter IFSC code"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bankName">Bank Name *</Label>
+                  <Input
+                    id="bankName"
+                    required
+                    value={formData.bankName}
+                    onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+                    placeholder="Enter bank name"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Document Upload */}
+            <Card className="mb-6">
+              <CardHeader className="bg-primary/5">
+                <CardTitle>Document Upload / दस्तावेज़ अपलोड</CardTitle>
+                <CardDescription>Upload required documents (PDF, JPG, PNG - Max 5MB each)</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label className="mb-2 block">FIR Copy *</Label>
+                    <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                      <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Click to upload FIR copy</p>
+                      <Input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="mb-2 block">Aadhaar Card *</Label>
+                    <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                      <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Click to upload Aadhaar card</p>
+                      <Input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="mb-2 block">Caste Certificate *</Label>
+                    <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+                      <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Click to upload caste certificate</p>
+                      <Input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Declaration */}
+            <Card className="mb-6 border-primary/50">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <input type="checkbox" id="declaration" required className="mt-1" />
+                  <label htmlFor="declaration" className="text-sm">
+                    <span className="font-semibold">Declaration:</span> I hereby declare that the information provided above is true and correct to the best of my knowledge. I understand that any false information may lead to rejection of my application and legal action.
+                  </label>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Submit Button */}
+            <div className="flex gap-4">
+              <Button type="submit" size="lg" className="flex-1 bg-primary hover:bg-primary/90">
+                <Save className="mr-2 h-5 w-5" />
+                Submit Application / आवेदन जमा करें
+              </Button>
+              <Button type="button" size="lg" variant="outline" onClick={() => navigate("/")}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };
