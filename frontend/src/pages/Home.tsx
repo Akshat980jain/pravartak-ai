@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, MapPin, BarChart2, Shield, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Line, LineChart, XAxis, YAxis } from "recharts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import IndiaChoropleth from "@/components/IndiaChoropleth";
 
 const Home = () => {
   const highlights = [
@@ -29,153 +32,136 @@ const Home = () => {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-primary/5 to-primary/10 py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
-              Direct Benefit Transfer Portal for Effective Implementation of PCR & PoA Acts
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
-              पीड़ित मुआवजा अधिनियम एवं अत्याचार निवारण अधिनियम के प्रभावी कार्यान्वयन के लिए प्रत्यक्ष लाभ हस्तांतरण पोर्टल
-            </p>
-          </div>
-        </section>
-
-        {/* Mission Statement */}
-        <section className="py-16 bg-white">
+        {/* Hero card like image */}
+        <section className="py-6">
           <div className="container mx-auto px-4">
-            <Card className="bg-gradient-to-br from-primary/5 to-accent/10 border-none p-12">
-              <h2 className="text-4xl font-bold mb-6">Justice. Dignity. Empowerment.</h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                Messages on justice, empowerment, and inter-caste harmony. / न्याय, सशक्तिकरण और अंतर-जातीय सद्भाव पर संदेश।
-              </p>
-              
-              <h3 className="text-2xl font-bold mb-6">Highlights</h3>
-              <div className="space-y-4">
-                {highlights.map((item, index) => (
-                  <Card key={index} className="p-6 hover:shadow-lg transition-shadow bg-white">
-                    <div className="flex items-start gap-4">
-                      <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-lg mb-1">
-                          {item.title} / {item.titleHi}
-                        </h4>
-                        <p className="text-muted-foreground">{item.description}</p>
+              <div className="grid lg:grid-cols-2 gap-6 items-stretch">
+              <div className="rounded overflow-hidden">
+                <img
+                  src="/Odisha-News.jpg"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/emblem-banner.jpg'; }}
+                  alt="National Emblem Banner"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <Card className="p-0 overflow-hidden">
+                <div className="p-6 sm:p-8 space-y-3">
+                  <h2 className="text-2xl sm:text-3xl font-bold">Justice. Dignity. Empowerment.</h2>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    Messages on justice, empowerment, and inter-caste harmony. / न्याय, सशक्तिकरण और अंतर-जातीय सद्भाव पर संदेश।
+                  </p>
+
+                  <div className="mt-3 space-y-3">
+                    {highlights.map((item, idx) => (
+                      <div key={idx} className="flex items-start gap-3 rounded border bg-white px-3 py-3">
+                        <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
+                        <div className="text-sm">
+                          {item.title} / <span className="text-muted-foreground">{item.titleHi}</span>
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="flex gap-4 mt-8">
-                <Link to="/register">
-                  <Button size="lg" className="bg-primary hover:bg-primary/90">
-                    Register Now
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link to="/track">
-                  <Button size="lg" variant="outline" className="border-2 border-[hsl(35,100%,50%)] text-[hsl(35,100%,50%)] hover:bg-[hsl(35,100%,50%)] hover:text-white">
-                    Track Application
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
-            </Card>
-          </div>
-        </section>
-
-        {/* Quick Access Cards */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-8 text-center">Our Services</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <Link to="/register">
-                <Card className="p-8 hover:shadow-xl transition-all hover:scale-105 h-full">
-                  <div className="text-5xl mb-4">📝</div>
-                  <h3 className="text-xl font-bold mb-3">New Application</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Apply for benefits under PCR & PoA Acts with easy online process
-                  </p>
-                  <p className="text-sm font-semibold text-primary">नया आवेदन →</p>
-                </Card>
-              </Link>
-
-              <Link to="/track">
-                <Card className="p-8 hover:shadow-xl transition-all hover:scale-105 h-full">
-                  <div className="text-5xl mb-4">🔍</div>
-                  <h3 className="text-xl font-bold mb-3">Track Status</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Monitor your application status in real-time with complete transparency
-                  </p>
-                  <p className="text-sm font-semibold text-primary">स्थिति जांचें →</p>
-                </Card>
-              </Link>
-
-              <Link to="/reports">
-                <Card className="p-8 hover:shadow-xl transition-all hover:scale-105 h-full">
-                  <div className="text-5xl mb-4">📊</div>
-                  <h3 className="text-xl font-bold mb-3">View Reports</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Access detailed reports and analytics on benefit distribution
-                  </p>
-                  <p className="text-sm font-semibold text-primary">रिपोर्ट देखें →</p>
-                </Card>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Important Information */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-8">
-              <Card className="p-8 border-l-4 border-primary">
-                <h3 className="text-2xl font-bold mb-4">📋 Eligibility Criteria</h3>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Victim of atrocity under SC/ST PoA Act</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Valid FIR registered under applicable sections</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Aadhaar-linked bank account for DBT</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Complete documentation as per guidelines</span>
-                  </li>
-                </ul>
-              </Card>
-
-              <Card className="p-8 border-l-4 border-[hsl(35,100%,50%)]">
-                <h3 className="text-2xl font-bold mb-4">⏱️ Processing Timeline</h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="font-semibold">Immediate Relief</p>
-                    <p className="text-sm text-muted-foreground">Within 3 days of FIR registration</p>
+                    ))}
                   </div>
-                  <div>
-                    <p className="font-semibold">Full Compensation</p>
-                    <p className="text-sm text-muted-foreground">Within 60 days of chargesheet filing</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Application Review</p>
-                    <p className="text-sm text-muted-foreground">15-30 days for verification</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">DBT Transfer</p>
-                    <p className="text-sm text-muted-foreground">5-7 days after approval</p>
+
+                  <div className="flex flex-wrap gap-3 mt-5">
+                    <Link to="/register">
+                      <Button className="bg-primary hover:bg-primary/90">
+                        Apply for Assistance
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Link to="/track">
+                      <Button variant="secondary">
+                        <Search className="mr-2 h-4 w-4" /> Track Status
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </Card>
             </div>
           </div>
         </section>
+
+        {/* Public Dashboard Snapshot */}
+        <section className="py-6">
+          <div className="container mx-auto px-4">
+            
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Total Beneficiaries</div><div className="text-xl font-bold">12,45,320</div></CardContent></Card>
+              <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Funds Disbursed</div><div className="text-xl font-bold">₹ 2,345 Cr</div></CardContent></Card>
+              <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Pending Cases</div><div className="text-xl font-bold">18,240</div></CardContent></Card>
+              <Card><CardContent className="p-4"><div className="text-xs text-muted-foreground">Active States/UTs</div><div className="text-xl font-bold">28 + UTs</div></CardContent></Card>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-4 mt-4">
+              <Card>
+                <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><MapPin className="h-4 w-4" /> State-wise Fund Tracking</CardTitle></CardHeader>
+                <CardContent className="p-4">
+                  <div className="h-72 rounded bg-muted border overflow-hidden">
+                    <IndiaChoropleth />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><BarChart2 className="h-4 w-4" /> Funds Trend (FY)</CardTitle></CardHeader>
+                <CardContent className="p-4">
+                  <ChartContainer config={{ funds: { label: 'Funds (Cr)', color: 'hsl(215 90% 57%)' } }} className="h-72">
+                    <LineChart data={[{ m: 'Apr', v: 120 }, { m: 'May', v: 180 }, { m: 'Jun', v: 220 }, { m: 'Jul', v: 260 }, { m: 'Aug', v: 240 }, { m: 'Sep', v: 300 }]} margin={{ left: 12, right: 12, top: 8, bottom: 8 }}>
+                      <XAxis dataKey="m" tickLine={false} axisLine={false} />
+                      <YAxis tickLine={false} axisLine={false} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Line type="monotone" dataKey="v" stroke="var(--color-funds)" strokeWidth={2} dot={false} name="funds" />
+                    </LineChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Schemes grid */}
+        <section className="py-6">
+          <div className="container mx-auto px-4">
+            <h3 className="text-sm font-semibold text-muted-foreground mb-3">Schemes</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                { title: 'PCR Act - Victim Compensation', desc: 'Immediate relief, rehab & legal aid' },
+                { title: 'PoA Act - Atrocities Relief', desc: 'Stage-wise assistance as per schedule' },
+                { title: 'Inter-Caste Marriage Incentive', desc: 'One-time incentive, eligibility rules' },
+                { title: 'Skill Development Support', desc: 'Training & employability for victims' },
+                { title: 'Education Assistance', desc: 'Scholarships and tuition support' },
+                { title: 'Livelihood Restoration', desc: 'Seed grants and micro–finance linkages' },
+              ].map((s, i) => (
+                <Card key={i} className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-semibold">{s.title}</div>
+                      <div className="text-xs text-muted-foreground">{s.desc}</div>
+                    </div>
+                    <Shield className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="mt-3">
+                    <Link to="/register"><Button size="sm">Apply / Know More</Button></Link>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Updates bar */}
+        <section className="py-6">
+          <div className="container mx-auto px-4">
+            <Card className="p-4">
+              <div className="text-sm font-semibold mb-2">Updates</div>
+              <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+                <li>Revised relief amounts effective 01 Apr.</li>
+                <li>Awareness drive on PoA rights across districts.</li>
+                <li>Guidelines available in Hindi and regional languages.</li>
+              </ul>
+            </Card>
+          </div>
+        </section>
+      
       </main>
 
       <Footer />

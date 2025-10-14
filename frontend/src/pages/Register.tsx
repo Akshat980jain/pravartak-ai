@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Save, Upload } from "lucide-react";
+import { Save, Upload, ArrowLeft, ShieldCheck, FileText, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,6 +15,7 @@ import Footer from "@/components/Footer";
 const Register = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [tab, setTab] = useState("step1");
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -45,6 +47,17 @@ const Register = () => {
     setTimeout(() => navigate("/track"), 2000);
   };
 
+  const nextStep = () => {
+    const order = ["step1", "step2", "step3", "step4", "step5"] as const;
+    const i = order.indexOf(tab as any);
+    if (i >= 0 && i < order.length - 1) setTab(order[i + 1]);
+  };
+  const prevStep = () => {
+    const order = ["step1", "step2", "step3", "step4", "step5"] as const;
+    const i = order.indexOf(tab as any);
+    if (i > 0) setTab(order[i - 1]);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Header />
@@ -52,24 +65,29 @@ const Register = () => {
       <main className="flex-1">
         <div className="bg-primary text-primary-foreground py-6">
           <div className="container mx-auto px-4">
-            <h1 className="text-3xl font-bold">Apply for Benefit</h1>
-            <p className="text-sm opacity-90 mt-1">लाभ के लिए आवेदन करें</p>
+            <h1 className="text-3xl font-bold">Beneficiary Registration</h1>
+            <p className="text-sm opacity-90 mt-1">Relief Assistance under PCR/PoA</p>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-8 max-w-5xl">
-          <div className="bg-yellow-50 border-l-4 border-[hsl(35,100%,50%)] p-4 mb-6">
-            <p className="text-sm font-semibold">📌 Important: All fields marked with * are mandatory. Please ensure all information is accurate.</p>
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            {/* Personal Information */}
-            <Card className="mb-6">
-              <CardHeader className="bg-primary/5">
-                <CardTitle>Personal Information / व्यक्तिगत जानकारी</CardTitle>
-                <CardDescription>Enter your basic details as per Aadhaar card</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
+          <div className="grid lg:grid-cols-[1fr_320px] gap-6 items-start">
+            <div>
+              <Tabs value={tab} onValueChange={setTab} className="mb-4">
+                <TabsList className="grid grid-cols-5 w-full">
+                  <TabsTrigger value="step1">1 Personal Details</TabsTrigger>
+                  <TabsTrigger value="step2">2 Incident/Case</TabsTrigger>
+                  <TabsTrigger value="step3">3 Bank Details</TabsTrigger>
+                  <TabsTrigger value="step4">4 Uploads</TabsTrigger>
+                  <TabsTrigger value="step5">5 Declaration</TabsTrigger>
+                </TabsList>
+                <TabsContent value="step1">
+                  <Card className="mb-6">
+                    <CardHeader className="bg-primary/5">
+                      <CardTitle>Personal Details</CardTitle>
+                      <CardDescription>Enter details as per Aadhaar</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="fullName">Full Name (as per Aadhaar) *</Label>
@@ -131,16 +149,15 @@ const Register = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Address Information */}
-            <Card className="mb-6">
-              <CardHeader className="bg-primary/5">
-                <CardTitle>Address Information / पता जानकारी</CardTitle>
-                <CardDescription>Provide your current residential address</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+                    </CardContent>
+                  </Card>
+                  {/* Address within Step 1 */}
+                  <Card className="mb-6">
+                    <CardHeader className="bg-primary/5">
+                      <CardTitle>Address</CardTitle>
+                      <CardDescription>Current residential address</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-6">
                 <div className="space-y-2">
                   <Label htmlFor="address">Full Address *</Label>
                   <Textarea
@@ -182,16 +199,26 @@ const Register = () => {
                     />
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
+                  <div className="flex justify-between gap-3">
+                    <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+                      <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                    </Button>
+                    <div className="flex gap-3">
+                      <Button type="button" variant="secondary">Save Draft</Button>
+                      <Button type="button" onClick={nextStep}>Next</Button>
+                    </div>
+                  </div>
+                </TabsContent>
 
-            {/* Incident Details */}
-            <Card className="mb-6">
-              <CardHeader className="bg-primary/5">
-                <CardTitle>Incident Details / घटना विवरण</CardTitle>
-                <CardDescription>Provide details about the atrocity/incident</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+                <TabsContent value="step2">
+                  <Card className="mb-6">
+                    <CardHeader className="bg-primary/5">
+                      <CardTitle>Incident/Case Details</CardTitle>
+                      <CardDescription>Provide details about the incident</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firNumber">FIR Number *</Label>
@@ -251,16 +278,24 @@ const Register = () => {
                     </SelectContent>
                   </Select>
                 </div>
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
+                  <div className="flex justify-between gap-3">
+                    <Button type="button" variant="outline" onClick={prevStep}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
+                    <div className="flex gap-3">
+                      <Button type="button" variant="secondary">Save Draft</Button>
+                      <Button type="button" onClick={nextStep}>Next</Button>
+                    </div>
+                  </div>
+                </TabsContent>
 
-            {/* Bank Details */}
-            <Card className="mb-6">
-              <CardHeader className="bg-primary/5">
-                <CardTitle>Bank Account Details / बैंक खाता विवरण</CardTitle>
-                <CardDescription>For direct benefit transfer (Aadhaar-linked account required)</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+                <TabsContent value="step3">
+                  <Card className="mb-6">
+                    <CardHeader className="bg-primary/5">
+                      <CardTitle>Bank Details</CardTitle>
+                      <CardDescription>Aadhaar-linked account for DBT</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="bankAccount">Bank Account Number *</Label>
@@ -294,16 +329,24 @@ const Register = () => {
                     placeholder="Enter bank name"
                   />
                 </div>
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
+                  <div className="flex justify-between gap-3">
+                    <Button type="button" variant="outline" onClick={prevStep}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
+                    <div className="flex gap-3">
+                      <Button type="button" variant="secondary">Save Draft</Button>
+                      <Button type="button" onClick={nextStep}>Next</Button>
+                    </div>
+                  </div>
+                </TabsContent>
 
-            {/* Document Upload */}
-            <Card className="mb-6">
-              <CardHeader className="bg-primary/5">
-                <CardTitle>Document Upload / दस्तावेज़ अपलोड</CardTitle>
-                <CardDescription>Upload required documents (PDF, JPG, PNG - Max 5MB each)</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 pt-6">
+                <TabsContent value="step4">
+                  <Card className="mb-6">
+                    <CardHeader className="bg-primary/5">
+                      <CardTitle>Document Uploads</CardTitle>
+                      <CardDescription>PDF/JPG/PNG (Max 5MB each)</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-6">
                 <div className="space-y-4">
                   <div>
                     <Label className="mb-2 block">FIR Copy *</Label>
@@ -332,32 +375,82 @@ const Register = () => {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                    </CardContent>
+                  </Card>
+                  <div className="flex justify-between gap-3">
+                    <Button type="button" variant="outline" onClick={prevStep}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
+                    <div className="flex gap-3">
+                      <Button type="button" variant="secondary">Save Draft</Button>
+                      <Button type="button" onClick={nextStep}>Next</Button>
+                    </div>
+                  </div>
+                </TabsContent>
 
-            {/* Declaration */}
-            <Card className="mb-6 border-primary/50">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-3">
-                  <input type="checkbox" id="declaration" required className="mt-1" />
-                  <label htmlFor="declaration" className="text-sm">
-                    <span className="font-semibold">Declaration:</span> I hereby declare that the information provided above is true and correct to the best of my knowledge. I understand that any false information may lead to rejection of my application and legal action.
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Submit Button */}
-            <div className="flex gap-4">
-              <Button type="submit" size="lg" className="flex-1 bg-primary hover:bg-primary/90">
-                <Save className="mr-2 h-5 w-5" />
-                Submit Application / आवेदन जमा करें
-              </Button>
-              <Button type="button" size="lg" variant="outline" onClick={() => navigate("/")}>
-                Cancel
-              </Button>
+                <TabsContent value="step5">
+                  <Card className="mb-6 border-primary/50">
+                    <CardHeader className="bg-primary/5">
+                      <CardTitle>Declaration</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                      <div className="flex items-start gap-3">
+                        <input type="checkbox" id="declaration" required className="mt-1" />
+                        <label htmlFor="declaration" className="text-sm">
+                          <span className="font-semibold">I hereby declare</span> that the information provided is true and I consent to eSign/OTP verification.
+                        </label>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <div className="flex justify-between gap-3">
+                    <Button type="button" variant="outline" onClick={prevStep}><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
+                    <div className="flex gap-3">
+                      <Button type="button" variant="secondary">Save Draft</Button>
+                      <Button type="submit" className="bg-primary hover:bg-primary/90">
+                        <Save className="mr-2 h-4 w-4" /> Submit & Generate Application ID
+                      </Button>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
-          </form>
+
+            <aside className="space-y-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2"><ShieldCheck className="h-4 w-4" /> Guidelines</CardTitle>
+                  <CardDescription>Keep Aadhaar, FIR, and bank details handy. Use DigiLocker for faster uploads.</CardDescription>
+                </CardHeader>
+                <CardContent className="text-sm text-muted-foreground">
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>NPCI verification ensures DBT to the correct account.</li>
+                    <li>Only clear, readable documents are accepted.</li>
+                    <li>Drafts auto-expire after 7 days.</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2"><ClipboardList className="h-4 w-4" /> Step Summary</CardTitle>
+                  <CardDescription>Current Step: Declaration</CardDescription>
+                </CardHeader>
+                <CardContent className="text-sm">
+                  <div className="flex items-center justify-between py-1">
+                    <span>Form Status</span>
+                    <span className="text-yellow-600">In Progress</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1">
+                    <span>Draft Saved</span>
+                    <span>—</span>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4" /> Need Help?</CardTitle>
+                  <CardDescription>Helpline: 1800-000-000 • Email: support@socialjustice.gov.in</CardDescription>
+                </CardHeader>
+              </Card>
+            </aside>
+          </div>
         </div>
       </main>
 
