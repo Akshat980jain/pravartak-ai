@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { getStatesList, getDistrictsList } from "@/lib/statesAndDistricts";
+import IndiaMapLeaflet from "@/components/IndiaMapLeaflet";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -314,12 +315,8 @@ const AdminDashboard = () => {
                 <CardTitle className="text-lg text-gray-900">State-wise Tagging of DBT Progress</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <Map className="h-16 w-16 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500">Map Placeholder</p>
-                    <p className="text-sm text-gray-400">Hover on states to view progress (simulated).</p>
-                  </div>
+                <div className="h-96 rounded-lg overflow-hidden border">
+                  <IndiaMapLeaflet />
                 </div>
               </CardContent>
             </Card>

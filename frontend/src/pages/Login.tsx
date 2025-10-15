@@ -277,14 +277,6 @@ const Login = () => {
               </form>
             )}
 
-            <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-              <p className="text-sm text-muted-foreground text-center">
-                <strong>Demo Credentials:</strong><br />
-                <strong>Beneficiary:</strong> Use Aadhaar: 123456789012, Phone: 9876543210<br />
-                <strong>District Officer:</strong> Username: district_officer, Password: password123<br />
-                <strong>Admin:</strong> Username: admin, Password: admin123
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>

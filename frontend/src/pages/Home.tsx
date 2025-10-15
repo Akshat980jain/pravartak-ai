@@ -6,7 +6,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Line, LineChart, XAxis, YAxis } from "recharts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import IndiaChoropleth from "@/components/IndiaChoropleth";
+import IndiaMapLeaflet from "@/components/IndiaMapLeaflet";
 
 const Home = () => {
   const highlights = [
@@ -97,7 +97,7 @@ const Home = () => {
                 <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><MapPin className="h-4 w-4" /> State-wise Tagging</CardTitle></CardHeader>
                 <CardContent className="p-4">
                   <div className="h-72 rounded bg-muted border overflow-hidden">
-                    <IndiaChoropleth />
+                    <IndiaMapLeaflet />
                   </div>
                 </CardContent>
               </Card>

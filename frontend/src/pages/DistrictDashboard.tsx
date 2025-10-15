@@ -11,13 +11,17 @@ import {
   X,
   Send,
   BarChart3,
-  PieChart
+  PieChart,
+  ExternalLink,
+  Upload,
+  Download
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell } from "recharts";
@@ -27,6 +31,8 @@ const DistrictDashboard = () => {
   const { toast } = useToast();
   const { user, logout } = useAuth();
   const [quickReply, setQuickReply] = useState("");
+  const [selectedApplication, setSelectedApplication] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -35,6 +41,71 @@ const DistrictDashboard = () => {
       description: "You have been logged out of the dashboard",
     });
     navigate("/login");
+  };
+
+  const handleViewApplication = (application: any) => {
+    setSelectedApplication(application);
+    setIsModalOpen(true);
+  };
+
+  const handleVerifyApplication = (applicationId: string) => {
+    setRecentApplications(prev => 
+      prev.map(app => 
+        app.id === applicationId 
+          ? { 
+              ...app, 
+              status: "Verified", 
+              statusIcon: <CheckCircle className="h-4 w-4" />,
+              officerRemarks: "Application verified and approved by officer."
+            }
+          : app
+      )
+    );
+    toast({
+      title: "Application Verified",
+      description: "The application has been verified and approved.",
+    });
+    setIsModalOpen(false);
+  };
+
+  const handleRejectApplication = (applicationId: string) => {
+    setRecentApplications(prev => 
+      prev.map(app => 
+        app.id === applicationId 
+          ? { 
+              ...app, 
+              status: "Rejected", 
+              statusIcon: <X className="h-4 w-4" />,
+              officerRemarks: "Application rejected due to insufficient documentation."
+            }
+          : app
+      )
+    );
+    toast({
+      title: "Application Rejected",
+      description: "The application has been rejected.",
+    });
+    setIsModalOpen(false);
+  };
+
+  const handleUnderReviewApplication = (applicationId: string) => {
+    setRecentApplications(prev => 
+      prev.map(app => 
+        app.id === applicationId 
+          ? { 
+              ...app, 
+              status: "Under Review", 
+              statusIcon: <Clock className="h-4 w-4" />,
+              officerRemarks: "Application is under review for additional verification."
+            }
+          : app
+      )
+    );
+    toast({
+      title: "Application Under Review",
+      description: "The application has been marked for additional review.",
+    });
+    setIsModalOpen(false);
   };
 
   // Mock data for charts
@@ -48,13 +119,13 @@ const DistrictDashboard = () => {
   ];
 
   const schemeData = [
-    { name: "PCR Victim Compensation", value: 45, color: "#2a5367" },
-    { name: "PoA Atrocities Relief", value: 30, color: "#2a5367" },
-    { name: "Inter-caste Marriage", value: 15, color: "#2a5367" },
-    { name: "Other Schemes", value: 10, color: "#2a5367" }
+    { name: "PCR Victim Compensation", value: 45, color: "#3b82f6" },
+    { name: "PoA Atrocities Relief", value: 30, color: "#10b981" },
+    { name: "Inter-caste Marriage", value: 15, color: "#f59e0b" },
+    { name: "Other Schemes", value: 10, color: "#ef4444" }
   ];
 
-  const recentApplications = [
+  const [recentApplications, setRecentApplications] = useState([
     { 
       id: "DO-2025-00123", 
       beneficiary: "Ravi Kumar", 
@@ -62,7 +133,21 @@ const DistrictDashboard = () => {
       scheme: "PCR Victim Compensation", 
       amount: "₹ 1,00,000", 
       status: "Pending",
-      statusIcon: <Clock className="h-4 w-4" />
+      statusIcon: <Clock className="h-4 w-4" />,
+      district: "Lucknow",
+      submissionDate: "10 Oct 2025",
+      firNumber: "FIR/UP/2025/09121",
+      ecourtCase: "2025/CR/1982",
+      bankAccount: "1234567890",
+      ifsc: "SBIN0000123",
+      bankName: "State Bank of India",
+      officerRemarks: "All documents verified, proceed for sanction.",
+      activityTimeline: [
+        { date: "12 Oct 2025 • 10:24", action: "Aadhaar eKYC matched", status: "completed" },
+        { date: "12 Oct 2025 • 09:10", action: "FIR reference pulled from CCTNS", status: "completed" },
+        { date: "11 Oct 2025 • 16:05", action: "Documents uploaded by applicant", status: "completed" },
+        { date: "10 Oct 2025 • 12:40", action: "Application submitted", status: "completed" }
+      ]
     },
     { 
       id: "DO-2025-00124", 
@@ -71,7 +156,20 @@ const DistrictDashboard = () => {
       scheme: "PoA Atrocities Relief", 
       amount: "₹ 75,000", 
       status: "Verified",
-      statusIcon: <CheckCircle className="h-4 w-4" />
+      statusIcon: <CheckCircle className="h-4 w-4" />,
+      district: "Kanpur",
+      submissionDate: "08 Oct 2025",
+      firNumber: "FIR/UP/2025/08945",
+      ecourtCase: "2025/CR/1956",
+      bankAccount: "9876543210",
+      ifsc: "HDFC0000123",
+      bankName: "HDFC Bank",
+      officerRemarks: "Application approved after verification.",
+      activityTimeline: [
+        { date: "10 Oct 2025 • 14:30", action: "Application verified and approved", status: "completed" },
+        { date: "09 Oct 2025 • 11:15", action: "Aadhaar eKYC matched", status: "completed" },
+        { date: "08 Oct 2025 • 16:20", action: "Application submitted", status: "completed" }
+      ]
     },
     { 
       id: "DO-2025-00125", 
@@ -80,9 +178,22 @@ const DistrictDashboard = () => {
       scheme: "Inter-caste Marriage Incentive", 
       amount: "₹ 2,50,000", 
       status: "Under Review",
-      statusIcon: <Clock className="h-4 w-4" />
+      statusIcon: <Clock className="h-4 w-4" />,
+      district: "Agra",
+      submissionDate: "09 Oct 2025",
+      firNumber: "FIR/UP/2025/09012",
+      ecourtCase: "2025/CR/1989",
+      bankAccount: "5555666677",
+      ifsc: "ICIC0000123",
+      bankName: "ICICI Bank",
+      officerRemarks: "Under review for additional documentation.",
+      activityTimeline: [
+        { date: "11 Oct 2025 • 09:45", action: "Additional documents requested", status: "pending" },
+        { date: "10 Oct 2025 • 15:20", action: "Initial verification completed", status: "completed" },
+        { date: "09 Oct 2025 • 13:10", action: "Application submitted", status: "completed" }
+      ]
     }
-  ];
+  ]);
 
   const grievances = [
     {
@@ -173,7 +284,7 @@ const DistrictDashboard = () => {
               <Badge className="bg-green-600 text-white">
                 Secure • PFMS Integrated
               </Badge>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="text-white border-white hover:bg-white hover:text-gray-900">
+              <Button variant="outline" size="sm" onClick={handleLogout} className="bg-red-600 text-white border-red-600 hover:bg-red-700 hover:border-red-700">
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
@@ -274,24 +385,42 @@ const DistrictDashboard = () => {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button size="sm" variant="outline">
-                              <Eye className="h-4 w-4 mr-1" />
+                          <div className="flex flex-wrap items-center gap-1">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="text-xs px-2 py-1"
+                              onClick={() => handleViewApplication(app)}
+                            >
+                              <Eye className="h-3 w-3 mr-1" />
                               View
                             </Button>
                             {app.status === "Pending" || app.status === "Under Review" ? (
-                              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                                <Check className="h-4 w-4 mr-1" />
+                              <Button 
+                                size="sm" 
+                                className="bg-blue-600 hover:bg-blue-700 text-xs px-2 py-1"
+                                onClick={() => handleVerifyApplication(app.id)}
+                              >
+                                <Check className="h-3 w-3 mr-1" />
                                 Verify
                               </Button>
                             ) : (
-                              <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                                <Check className="h-4 w-4 mr-1" />
+                              <Button 
+                                size="sm" 
+                                className="bg-blue-600 hover:bg-blue-700 text-xs px-2 py-1"
+                                onClick={() => handleVerifyApplication(app.id)}
+                              >
+                                <Check className="h-3 w-3 mr-1" />
                                 Approve
                               </Button>
                             )}
-                            <Button size="sm" variant="destructive">
-                              <X className="h-4 w-4 mr-1" />
+                            <Button 
+                              size="sm" 
+                              variant="destructive" 
+                              className="text-xs px-2 py-1"
+                              onClick={() => handleRejectApplication(app.id)}
+                            >
+                              <X className="h-3 w-3 mr-1" />
                               Reject
                             </Button>
                           </div>
@@ -460,6 +589,239 @@ const DistrictDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Application Details Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Application Details</DialogTitle>
+          </DialogHeader>
+          
+          {selectedApplication && (
+            <div className="space-y-6">
+              {/* Header with Status */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold">#{selectedApplication.id}</h2>
+                  <p className="text-gray-600">{selectedApplication.beneficiary} • {selectedApplication.scheme}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge className={`${getStatusBadge(selectedApplication.status)} flex items-center gap-1`}>
+                    {selectedApplication.statusIcon}
+                    {selectedApplication.status}
+                  </Badge>
+                  <Badge className="bg-green-100 text-green-800">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    eKYC Matched
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Applicant & Case Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Applicant & Case Information / आवेदक व मामला विवरण</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-600">Beneficiary / लाभार्थी</p>
+                    <p className="font-medium">{selectedApplication.beneficiary}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Aadhaar / आधार</p>
+                    <p className="font-medium">{selectedApplication.aadhaar}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Scheme / योजना</p>
+                    <p className="font-medium">{selectedApplication.scheme}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Requested Amount / राशि</p>
+                    <p className="font-medium">{selectedApplication.amount}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">District</p>
+                    <p className="font-medium">{selectedApplication.district}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Submission Date</p>
+                    <p className="font-medium">{selectedApplication.submissionDate}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Verification Links */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Verification Links / प्रमाणीकरण लिंक</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <span className="font-medium">Aadhaar eKYC Snapshot</span>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <ExternalLink className="h-3 w-3 mr-1" />
+                      View
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="font-medium">FIR (CCTNS) - Ref: {selectedApplication.firNumber}</span>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <ExternalLink className="h-3 w-3 mr-1" />
+                      View
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="font-medium">eCourts Case - {selectedApplication.ecourtCase}</span>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <ExternalLink className="h-3 w-3 mr-1" />
+                      View
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Upload className="h-4 w-4 text-gray-600" />
+                      <span className="font-medium">Uploaded Proofs (ID, Affidavit, Bank Passbook)</span>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Download className="h-3 w-3 mr-1" />
+                      Download
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Bank & PFMS */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Bank & PFMS / बैंक और पीएफएमएस</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600">Account Validation</p>
+                    <p className="font-medium">Validated via PFMS • IFSC: {selectedApplication.ifsc}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Beneficiary Bank</p>
+                    <p className="font-medium">{selectedApplication.bankName}</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Activity Timeline */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Activity Timeline / प्रगति</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {selectedApplication.activityTimeline.map((activity: any, index: number) => (
+                      <div key={index} className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${
+                          activity.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'
+                        }`}></div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{activity.action}</p>
+                          <p className="text-xs text-gray-600">{activity.date}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Officer Remarks */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Officer Remarks / अधिकारी टिप्पणी</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700">{selectedApplication.officerRemarks}</p>
+                </CardContent>
+              </Card>
+
+              {/* Sanction Summary */}
+              <Card className="bg-blue-50">
+                <CardHeader>
+                  <CardTitle className="text-lg">Sanction Summary / स्वीकृति सार</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600">Eligible Amount</p>
+                      <p className="font-bold text-lg">{selectedApplication.amount}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Verification Status</p>
+                      <p className="font-medium">Ready for Approval</p>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Disbursement Mode</p>
+                    <p className="font-medium">PFMS • DBT</p>
+                  </div>
+                  <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Note:</strong> Clicking Verify & Approve will initiate PFMS/DBT request.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-3 pt-4 border-t">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Close
+                </Button>
+                {selectedApplication.status === "Pending" || selectedApplication.status === "Under Review" ? (
+                  <>
+                    <Button 
+                      className="bg-orange-600 hover:bg-orange-700"
+                      onClick={() => handleUnderReviewApplication(selectedApplication.id)}
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      Mark Under Review
+                    </Button>
+                    <Button 
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => handleVerifyApplication(selectedApplication.id)}
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Verify & Approve
+                    </Button>
+                  </>
+                ) : selectedApplication.status === "Verified" ? (
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700"
+                    onClick={() => handleVerifyApplication(selectedApplication.id)}
+                  >
+                    <Check className="h-4 w-4 mr-2" />
+                    Approve
+                  </Button>
+                ) : null}
+                <Button 
+                  variant="destructive"
+                  onClick={() => handleRejectApplication(selectedApplication.id)}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Reject
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Footer */}
       <footer className="text-white py-4 mt-8" style={{ backgroundColor: '#2a5367' }}>
