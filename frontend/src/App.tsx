@@ -17,6 +17,7 @@ import BeneficiaryDashboard from "./pages/BeneficiaryDashboard";
 import DistrictDashboard from "./pages/DistrictDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import NyayBot from "@/components/NyayBot";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <NyayBot />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>

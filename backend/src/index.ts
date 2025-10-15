@@ -23,7 +23,9 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json({ limit: '1mb' }));
+// Increase body size limit to allow base64-encoded document uploads
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(morgan('dev'));
 app.use(
 	rateLimit({

@@ -127,10 +127,10 @@ const DistrictDashboard = () => {
 
   const [recentApplications, setRecentApplications] = useState([
     { 
-      id: "DO-2025-00123", 
+      id: "DBT-PCR-X2LJBHK9", 
       beneficiary: "Ravi Kumar", 
       aadhaar: "XXXX-XXXX-1234",
-      scheme: "PCR Victim Compensation", 
+      scheme: "PoA Immediate relief compensation", 
       amount: "₹ 1,00,000", 
       status: "Pending",
       statusIcon: <Clock className="h-4 w-4" />,

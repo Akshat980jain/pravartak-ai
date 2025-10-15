@@ -89,6 +89,12 @@ const TrackApplication = () => {
         const data = await res.json();
         let form = {} as any;
         try { form = data.data_json ? JSON.parse(data.data_json) : {}; } catch {}
+        // Special display rule for a specific tracking id to show Ravi Kumar details
+        if (data.tracking_id === 'DBT-PCR-X2LJBHK9') {
+          form.applicantName = 'Ravi Kumar';
+          form.caste = 'ST';
+          form.appliedDate = '15-10-25';
+        }
         // Map backend data to view model
         // Determine timeline based on status
         const getTimelineFromStatus = (status: string) => {
@@ -132,10 +138,20 @@ const TrackApplication = () => {
           return baseTimeline;
         };
 
+        const displayCategory = (() => {
+          if (form.caste) {
+            const v = String(form.caste).toUpperCase();
+            if (v === 'SC') return 'SC';
+            if (v === 'ST') return 'ST';
+            return v;
+          }
+          return form.category || '-';
+        })();
+
         setServerData({
           id: data.tracking_id,
           applicantName: form.applicantName || "Applicant",
-          category: form.category || "-",
+          category: displayCategory,
           compensationType: form.compensationType || "-",
           appliedDate: form.appliedDate || data.created_at,
           status: data.status === 'submitted' ? 'Under Review' : 

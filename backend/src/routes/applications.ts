@@ -22,7 +22,9 @@ router.post('/', (req, res, next) => {
       const row = db.exec('SELECT id FROM users ORDER BY id DESC LIMIT 1')[0]?.values?.[0]?.[0];
       userId = Number(row);
     }
-    const trackingId = `T-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
+    // Generate tracking id like DBT-PCR-X2LJBHK9
+    const randomPart = Math.random().toString(36).toUpperCase().slice(2, 10);
+    const trackingId = `DBT-PCR-${randomPart}`;
     const stmtApp = db.prepare('INSERT INTO applications (tracking_id, user_id, scheme_id, data_json) VALUES (?, ?, ?, ?)');
     stmtApp.run([trackingId, userId ?? null, body.schemeId, JSON.stringify(body.data)]);
     const created = db.exec('SELECT * FROM applications ORDER BY id DESC LIMIT 1')[0]?.values?.[0];

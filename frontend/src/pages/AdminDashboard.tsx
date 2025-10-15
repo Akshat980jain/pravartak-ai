@@ -24,6 +24,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { getStatesList, getDistrictsList } from "@/lib/statesAndDistricts";
 import IndiaMapLeaflet from "@/components/IndiaMapLeaflet";
+import NyayBot from "@/components/NyayBot";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -481,6 +482,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </footer>
+      <NyayBot />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { Line, LineChart, XAxis, YAxis } from "recharts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import IndiaMapLeaflet from "@/components/IndiaMapLeaflet";
+import NyayBot from "@/components/NyayBot";
 
 const Home = () => {
   const highlights = [
@@ -165,6 +166,7 @@ const Home = () => {
       </main>
 
       <Footer />
+      <NyayBot />
     </div>
   );
 };
