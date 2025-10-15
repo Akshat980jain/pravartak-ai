@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getStatesList, getDistrictsList } from "@/lib/statesAndDistricts";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -173,30 +174,40 @@ const Register = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="state">State *</Label>
-                    <Select value={formData.state} onValueChange={(value) => setFormData({ ...formData, state: value })}>
+                    <Select 
+                      value={formData.state} 
+                      onValueChange={(value) => setFormData({ ...formData, state: value, district: "" })}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select state" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="maharashtra">Maharashtra</SelectItem>
-                        <SelectItem value="delhi">Delhi</SelectItem>
-                        <SelectItem value="karnataka">Karnataka</SelectItem>
-                        <SelectItem value="tamilnadu">Tamil Nadu</SelectItem>
-                        <SelectItem value="gujarat">Gujarat</SelectItem>
-                        <SelectItem value="rajasthan">Rajasthan</SelectItem>
-                        <SelectItem value="up">Uttar Pradesh</SelectItem>
+                        {getStatesList().map((state) => (
+                          <SelectItem key={state.value} value={state.value}>
+                            {state.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="district">District *</Label>
-                    <Input
-                      id="district"
-                      required
+                    <Select
                       value={formData.district}
-                      onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                      placeholder="Enter district"
-                    />
+                      onValueChange={(value) => setFormData({ ...formData, district: value })}
+                      disabled={!formData.state}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={formData.state ? "Select district" : "Select state first"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {formData.state && getDistrictsList(formData.state).map((district) => (
+                          <SelectItem key={district} value={district.toLowerCase().replace(/\s+/g, "-")}>
+                            {district}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                     </CardContent>

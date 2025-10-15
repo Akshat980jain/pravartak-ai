@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Globe } from "lucide-react";
+import { Globe, Shield } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
+  const { isAuthenticated, user } = useAuth();
+
   return (
     <header>
       {/* Top Bar with Ministry Info */}
@@ -19,10 +22,33 @@ const Header = () => {
               <p className="text-sm opacity-90">सामाजिक न्याय एवं अधिकारिता मंत्रालय, भारत सरकार</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="bg-white text-primary hover:bg-gray-100">
-            <Globe className="mr-2 h-4 w-4" />
-            EN | HI
-          </Button>
+          <div className="flex items-center gap-2">
+            {isAuthenticated ? (
+              <Link to={
+                user?.role === 'beneficiary' ? '/beneficiary-dashboard' :
+                user?.role === 'district_officer' ? '/district-dashboard' :
+                user?.role === 'admin' ? '/admin-dashboard' : '/login'
+              }>
+                <Button variant="outline" size="sm" className="bg-white text-primary hover:bg-gray-100">
+                  <Shield className="mr-2 h-4 w-4" />
+                  {user?.role === 'beneficiary' ? 'My Dashboard' :
+                   user?.role === 'district_officer' ? 'Officer Dashboard' :
+                   user?.role === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button variant="outline" size="sm" className="bg-white text-primary hover:bg-gray-100">
+                  <Shield className="mr-2 h-4 w-4" />
+                  Login / Sign Up
+                </Button>
+              </Link>
+            )}
+            <Button variant="outline" size="sm" className="bg-white text-primary hover:bg-gray-100">
+              <Globe className="mr-2 h-4 w-4" />
+              EN | HI
+            </Button>
+          </div>
         </div>
       </div>
 

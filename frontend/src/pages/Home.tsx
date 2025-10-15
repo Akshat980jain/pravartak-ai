@@ -94,7 +94,7 @@ const Home = () => {
 
             <div className="grid lg:grid-cols-2 gap-4 mt-4">
               <Card>
-                <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><MapPin className="h-4 w-4" /> State-wise Fund Tracking</CardTitle></CardHeader>
+                <CardHeader className="pb-2"><CardTitle className="text-base flex items-center gap-2"><MapPin className="h-4 w-4" /> State-wise Tagging</CardTitle></CardHeader>
                 <CardContent className="p-4">
                   <div className="h-72 rounded bg-muted border overflow-hidden">
                     <IndiaChoropleth />
